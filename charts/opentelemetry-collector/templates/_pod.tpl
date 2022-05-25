@@ -55,6 +55,8 @@ containers:
     volumeMounts:
       - mountPath: /conf
         name: {{ .Chart.Name }}-configmap
+      - mountPath: /opt/harness/svc
+        name: {{ .Chart.Name }}-secret
       {{- range .Values.extraConfigMapMounts }}
       - name: {{ .name }}
         mountPath: {{ .mountPath }}
@@ -104,6 +106,12 @@ volumes:
       items:
         - key: relay
           path: relay.yaml
+  - name: {{ .Chart.Name }}-secret
+    secret:
+      secretName: {{ include "opentelemetry-collector.fullname" . }}
+      items:
+        - key: cloud-trace-sa
+          path: cloud-trace-sa.json
   {{- range .Values.extraConfigMapMounts }}
   - name: {{ .name }}
     configMap:
